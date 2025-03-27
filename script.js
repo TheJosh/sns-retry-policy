@@ -41,19 +41,20 @@
 
         infoPreBackoff.innerText = numMinDelayRetries.value + ' retries';
         if (numMinDelayRetries.value > 0) {
-            infoPreBackoff.innerText += ' every ' + minDelayTarget.value + ' seconds';
+            infoPreBackoff.innerText += ' every ' + secsToTime(minDelayTarget.value);
         }
 
         infoPostBackoff.innerText = numMaxDelayRetries.value + ' retries';
         if (numMaxDelayRetries.value > 0) {
-            infoPostBackoff.innerText += ' every ' + maxDelayTarget.value + ' seconds';
+            infoPostBackoff.innerText += ' every ' + secsToTime(maxDelayTarget.value);
         }
 
         var backoff = parseInt(numRetries.value, 10) - parseInt(numNoDelayRetries.value, 10)
             - parseInt(numMinDelayRetries.value, 10) - parseInt(numMaxDelayRetries.value, 10);
         infoBackoff.innerText = backoff + ' retries';
         if (backoff > 0) {
-            infoBackoff.innerText += ' between ' + minDelayTarget.value + ' and ' + maxDelayTarget.value + ' seconds';
+            infoBackoff.innerText += ' between ' + secsToTime(minDelayTarget.value);
+            infoBackoff.innerText += ' and ' + secsToTime(maxDelayTarget.value);
         }
 
         var policyJson = {
@@ -66,6 +67,20 @@
             "backoffFunction": backoffFunction.value
         };
         policy.innerText = JSON.stringify(policyJson, null, 4);
+    }
+
+
+    /**
+     * Convert a time in seconds into something more suitable for display
+     */
+    function secsToTime(secs)
+    {
+        secs = parseInt(secs, 10)
+        if (secs < 300) {
+            return secs + ' seconds';
+        } else {
+            return Math.round(secs / 60) + ' minutes';
+        }
     }
 
 
