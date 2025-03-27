@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SNS Delivery Policy Visualisation</title>
+    <script src="script.js"></script>
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="phases">
+        <div class="phase phase-immediate">
+            <div class="label">Immediate Retry</div>
+            <div class="info" id="infoImmediate"></div>
+        </div>
+        <div class="phase phase-pre-backoff">
+            <div class="label">Pre-Backoff</div>
+            <div class="info" id="infoPreBackoff"></div>
+        </div>
+        <div class="phase phase-backoff">
+            <div class="label">Backoff</div>
+            <div class="info" id="infoBackoff"></div>
+        </div>
+        <div class="phase phase-post-backoff">
+            <div class="label">Post-Backoff</div>
+            <div class="info" id="infoPostBackoff"></div>
+        </div>
+    </div>
+
+
+    <div class="row">
+
+        <form>
+            <div class="field">
+                <b>Number of retries</b>
+                <input type="number" id="numRetries" value="3" min="0" max="999999">
+            </div>
+            <div class="field">
+                <b>Retries without delay</b>
+                <input type="number" id="numNoDelayRetries" value="0" min="0" max="999999">
+            </div>
+            <div class="field">
+                <b>Minimum delay</b>
+                <input type="number" id="minDelayTarget" value="20" min="0" max="3600">
+            </div>
+            <div class="field">
+                <b>Maximum delay</b>
+                <input type="number" id="maxDelayTarget" value="20" min="0" max="3600">
+            </div>
+            <div class="field">
+                <b>Minimum delay retries</b>
+                <input type="number" id="numMinDelayRetries" value="0" min="0" max="999999">
+            </div>
+            <div class="field">
+                <b>Maximum delay retries</b>
+                <input type="number" id="numMaxDelayRetries" value="0" min="0" max="999999">
+            </div>
+            <div class="field">
+                <b>Retry-backoff function</b>
+                <select id="backoffFunction">
+                    <option value="linear">Linear</option>
+                    <option value="arithmetic">Arithmetic</option>
+                    <option value="geometric">Geometric</option>
+                    <option value="exponential">Exponential</option>
+                </select>
+            </div>
+        </form>
+
+        <pre id="policy"></pre>
+
+    </div>
+
+</body>
+</html>
