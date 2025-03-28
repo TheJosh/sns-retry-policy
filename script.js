@@ -39,24 +39,35 @@
     {
         infoImmediate.innerText = numNoDelayRetries.value + ' retries';
 
+        // Pre-backoff
         infoPreBackoff.innerText = numMinDelayRetries.value + ' retries';
         if (numMinDelayRetries.value > 0) {
-            infoPreBackoff.innerText += ' every ' + secsToTime(minDelayTarget.value);
+            infoPreBackoff.innerHTML += ' every ' + secsToTime(minDelayTarget.value);
+            infoPreBackoff.innerHTML += '<br>';
+            infoPreBackoff.innerHTML += 'Total: ' + secsToTime(numMinDelayRetries.value + minDelayTarget.value);
         }
 
+        // Post-backoff
         infoPostBackoff.innerText = numMaxDelayRetries.value + ' retries';
         if (numMaxDelayRetries.value > 0) {
-            infoPostBackoff.innerText += ' every ' + secsToTime(maxDelayTarget.value);
+            infoPostBackoff.innerHTML += ' every ' + secsToTime(maxDelayTarget.value);
+            infoPostBackoff.innerHTML += '<br>';
+            infoPostBackoff.innerHTML += 'Total: ' + secsToTime(numMaxDelayRetries.value + maxDelayTarget.value);
         }
 
-        var backoff = parseInt(numRetries.value, 10) - parseInt(numNoDelayRetries.value, 10)
+        // Backoff phase
+        var backoffSends = parseInt(numRetries.value, 10) - parseInt(numNoDelayRetries.value, 10)
             - parseInt(numMinDelayRetries.value, 10) - parseInt(numMaxDelayRetries.value, 10);
-        infoBackoff.innerText = backoff + ' retries';
-        if (backoff > 0) {
-            infoBackoff.innerText += ' between ' + secsToTime(minDelayTarget.value);
-            infoBackoff.innerText += ' and ' + secsToTime(maxDelayTarget.value);
+        var backoffAvgDelay = ((maxDelayTarget.value - minDelayTarget.value) / 2) + parseInt(minDelayTarget.value, 10);
+        infoBackoff.innerText = backoffSends + ' retries';
+        if (backoffSends > 0) {
+            infoBackoff.innerHTML += ' between ' + secsToTime(minDelayTarget.value);
+            infoBackoff.innerHTML += ' and ' + secsToTime(maxDelayTarget.value);
+            infoBackoff.innerHTML += '<br>';
+            infoBackoff.innerHTML += 'Total: ~ ' + secsToTime(backoffSends * backoffAvgDelay);
         }
 
+        // Generate the policy from the field values
         var policyJson = {
             "numRetries": parseInt(numRetries.value, 10),
             "numNoDelayRetries": parseInt(numNoDelayRetries.value, 10),
