@@ -48,7 +48,7 @@
 
         // Pre-backoff
         infoPreBackoffEl.innerHTML = numMinDelayRetries + ' retries';
-        if (numMinDelayRetries.value > 0) {
+        if (numMinDelayRetries > 0) {
             infoPreBackoffEl.innerHTML += ' every ' + secsToTime(minDelayTarget);
             infoPreBackoffEl.innerHTML += '<br>';
             infoPreBackoffEl.innerHTML += 'Total: ' + secsToTime(numMinDelayRetries * minDelayTarget);
@@ -56,7 +56,7 @@
 
         // Post-backoff
         infoPostBackoffEl.innerHTML = numMaxDelayRetries + ' retries';
-        if (numMaxDelayRetries.value > 0) {
+        if (numMaxDelayRetries > 0) {
             infoPostBackoffEl.innerHTML += ' every ' + secsToTime(maxDelayTarget);
             infoPostBackoffEl.innerHTML += '<br>';
             infoPostBackoffEl.innerHTML += 'Total: ' + secsToTime(numMaxDelayRetries * maxDelayTarget);
