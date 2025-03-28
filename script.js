@@ -1,7 +1,7 @@
 (function() {
-    var infoImmediate, infoPreBackoff, infoBackoff, infoPostBackoff;
-    var numRetries, numNoDelayRetries, minDelayTarget, maxDelayTarget, numMinDelayRetries, numMaxDelayRetries, backoffFunction;
-    var policy;
+    var infoImmediateEl, infoPreBackoffEl, infoBackoffEl, infoPostBackoffEl;
+    var numRetriesEl, numNoDelayRetriesEl, minDelayTargetEl, maxDelayTargetEl, numMinDelayRetriesEl, numMaxDelayRetriesEl, backoffFunctionEl;
+    var policyEl;
 
 
     /**
@@ -9,26 +9,26 @@
      */
     function init()
     {
-        infoImmediate = document.getElementById('infoImmediate');
-        infoPreBackoff = document.getElementById('infoPreBackoff');
-        infoBackoff = document.getElementById('infoBackoff');
-        infoPostBackoff = document.getElementById('infoPostBackoff');
-        numRetries = document.getElementById('numRetries');
-        numNoDelayRetries = document.getElementById('numNoDelayRetries');
-        minDelayTarget = document.getElementById('minDelayTarget');
-        maxDelayTarget = document.getElementById('maxDelayTarget');
-        numMinDelayRetries = document.getElementById('numMinDelayRetries');
-        numMaxDelayRetries = document.getElementById('numMaxDelayRetries');
-        backoffFunction = document.getElementById('backoffFunction');
-        policy = document.getElementById('policy');
+        infoImmediateEl = document.getElementById('infoImmediate');
+        infoPreBackoffEl = document.getElementById('infoPreBackoff');
+        infoBackoffEl = document.getElementById('infoBackoff');
+        infoPostBackoffEl = document.getElementById('infoPostBackoff');
+        numRetriesEl = document.getElementById('numRetries');
+        numNoDelayRetriesEl = document.getElementById('numNoDelayRetries');
+        minDelayTargetEl = document.getElementById('minDelayTarget');
+        maxDelayTargetEl = document.getElementById('maxDelayTarget');
+        numMinDelayRetriesEl = document.getElementById('numMinDelayRetries');
+        numMaxDelayRetriesEl = document.getElementById('numMaxDelayRetries');
+        backoffFunctionEl = document.getElementById('backoffFunction');
+        policyEl = document.getElementById('policy');
 
-        numRetries.addEventListener('input', calculate);
-        numNoDelayRetries.addEventListener('input', calculate);
-        minDelayTarget.addEventListener('input', calculate);
-        maxDelayTarget.addEventListener('input', calculate);
-        numMinDelayRetries.addEventListener('input', calculate);
-        numMaxDelayRetries.addEventListener('input', calculate);
-        backoffFunction.addEventListener('input', calculate);
+        numRetriesEl.addEventListener('input', calculate);
+        numNoDelayRetriesEl.addEventListener('input', calculate);
+        minDelayTargetEl.addEventListener('input', calculate);
+        maxDelayTargetEl.addEventListener('input', calculate);
+        numMinDelayRetriesEl.addEventListener('input', calculate);
+        numMaxDelayRetriesEl.addEventListener('input', calculate);
+        backoffFunctionEl.addEventListener('input', calculate);
     }
 
 
@@ -37,47 +37,53 @@
      */
     function calculate()
     {
-        infoImmediate.innerText = numNoDelayRetries.value + ' retries';
+        let numRetries = parseInt(numRetriesEl.value, 10);
+        let numNoDelayRetries = parseInt(numNoDelayRetriesEl.value, 10);
+        let minDelayTarget = parseInt(minDelayTargetEl.value, 10);
+        let maxDelayTarget = parseInt(maxDelayTargetEl.value, 10);
+        let numMinDelayRetries = parseInt(numMinDelayRetriesEl.value, 10);
+        let numMaxDelayRetries = parseInt(numMaxDelayRetriesEl.value, 10);
+
+        infoImmediateEl.innerHTML = numNoDelayRetries + ' retries';
 
         // Pre-backoff
-        infoPreBackoff.innerText = numMinDelayRetries.value + ' retries';
+        infoPreBackoffEl.innerHTML = numMinDelayRetries + ' retries';
         if (numMinDelayRetries.value > 0) {
-            infoPreBackoff.innerHTML += ' every ' + secsToTime(minDelayTarget.value);
-            infoPreBackoff.innerHTML += '<br>';
-            infoPreBackoff.innerHTML += 'Total: ' + secsToTime(numMinDelayRetries.value + minDelayTarget.value);
+            infoPreBackoffEl.innerHTML += ' every ' + secsToTime(minDelayTarget);
+            infoPreBackoffEl.innerHTML += '<br>';
+            infoPreBackoffEl.innerHTML += 'Total: ' + secsToTime(numMinDelayRetries * minDelayTarget);
         }
 
         // Post-backoff
-        infoPostBackoff.innerText = numMaxDelayRetries.value + ' retries';
+        infoPostBackoffEl.innerHTML = numMaxDelayRetries + ' retries';
         if (numMaxDelayRetries.value > 0) {
-            infoPostBackoff.innerHTML += ' every ' + secsToTime(maxDelayTarget.value);
-            infoPostBackoff.innerHTML += '<br>';
-            infoPostBackoff.innerHTML += 'Total: ' + secsToTime(numMaxDelayRetries.value + maxDelayTarget.value);
+            infoPostBackoffEl.innerHTML += ' every ' + secsToTime(maxDelayTarget);
+            infoPostBackoffEl.innerHTML += '<br>';
+            infoPostBackoffEl.innerHTML += 'Total: ' + secsToTime(numMaxDelayRetries * maxDelayTarget);
         }
 
         // Backoff phase
-        var backoffSends = parseInt(numRetries.value, 10) - parseInt(numNoDelayRetries.value, 10)
-            - parseInt(numMinDelayRetries.value, 10) - parseInt(numMaxDelayRetries.value, 10);
-        var backoffAvgDelay = ((maxDelayTarget.value - minDelayTarget.value) / 2) + parseInt(minDelayTarget.value, 10);
-        infoBackoff.innerText = backoffSends + ' retries';
+        var backoffSends = numRetries - numNoDelayRetries - numMinDelayRetries - numMaxDelayRetries;
+        var backoffAvgDelay = ((maxDelayTarget - minDelayTarget) / 2) + minDelayTarget;
+        infoBackoffEl.innerHTML = backoffSends + ' retries';
         if (backoffSends > 0) {
-            infoBackoff.innerHTML += ' between ' + secsToTime(minDelayTarget.value);
-            infoBackoff.innerHTML += ' and ' + secsToTime(maxDelayTarget.value);
-            infoBackoff.innerHTML += '<br>';
-            infoBackoff.innerHTML += 'Total: ~ ' + secsToTime(backoffSends * backoffAvgDelay);
+            infoBackoffEl.innerHTML += ' between ' + secsToTime(minDelayTarget);
+            infoBackoffEl.innerHTML += ' and ' + secsToTime(maxDelayTarget);
+            infoBackoffEl.innerHTML += '<br>';
+            infoBackoffEl.innerHTML += 'Total: ~ ' + secsToTime(backoffSends * backoffAvgDelay);
         }
 
         // Generate the policy from the field values
         var policyJson = {
-            "numRetries": parseInt(numRetries.value, 10),
-            "numNoDelayRetries": parseInt(numNoDelayRetries.value, 10),
-            "minDelayTarget": parseInt(minDelayTarget.value, 10),
-            "maxDelayTarget": parseInt(maxDelayTarget.value, 10),
-            "numMinDelayRetries": parseInt(numMinDelayRetries.value, 10),
-            "numMaxDelayRetries": parseInt(numMaxDelayRetries.value, 10),
-            "backoffFunction": backoffFunction.value
+            "numRetries": numRetries,
+            "numNoDelayRetries": numNoDelayRetries,
+            "minDelayTarget": minDelayTarget,
+            "maxDelayTarget": maxDelayTarget,
+            "numMinDelayRetries": numMinDelayRetries,
+            "numMaxDelayRetries": numMaxDelayRetries,
+            "backoffFunction": backoffFunctionEl.value
         };
-        policy.innerText = JSON.stringify(policyJson, null, 4);
+        policyEl.innerText = JSON.stringify(policyJson, null, 4);
     }
 
 
@@ -86,11 +92,12 @@
      */
     function secsToTime(secs)
     {
-        secs = parseInt(secs, 10)
         if (secs < 300) {
             return secs + ' seconds';
-        } else {
+        } else if (secs < 7200) {
             return Math.round(secs / 60) + ' minutes';
+        } else {
+            return Math.round(secs / 60 / 60) + ' hours';
         }
     }
 
