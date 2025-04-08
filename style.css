@@ -37,6 +37,19 @@ body {
 }
 
 
+.total-time {
+    text-align: center;
+    padding: 1em;
+    background: #eee;
+    margin: 1em 0;
+    line-height: 2;
+}
+.total-time .warn {
+    color: #900;
+    font-weight: bold;
+}
+
+
 .row {
     display: flex;
     width: 70%;

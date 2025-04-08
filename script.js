@@ -1,5 +1,5 @@
 (function() {
-    var infoImmediateEl, infoPreBackoffEl, infoBackoffEl, infoPostBackoffEl;
+    var infoImmediateEl, infoPreBackoffEl, infoBackoffEl, infoPostBackoffEl, infoTotalTimeEl;
     var numRetriesEl, numNoDelayRetriesEl, minDelayTargetEl, maxDelayTargetEl, numMinDelayRetriesEl, numMaxDelayRetriesEl, backoffFunctionEl;
     var policyEl;
 
@@ -13,6 +13,7 @@
         infoPreBackoffEl = document.getElementById('infoPreBackoff');
         infoBackoffEl = document.getElementById('infoBackoff');
         infoPostBackoffEl = document.getElementById('infoPostBackoff');
+        infoTotalTimeEl = document.getElementById('infoTotalTime');
         numRetriesEl = document.getElementById('numRetries');
         numNoDelayRetriesEl = document.getElementById('numNoDelayRetries');
         minDelayTargetEl = document.getElementById('minDelayTarget');
@@ -71,6 +72,15 @@
             infoBackoffEl.innerHTML += ' and ' + secsToTime(maxDelayTarget);
             infoBackoffEl.innerHTML += '<br>';
             infoBackoffEl.innerHTML += 'Total: ~ ' + secsToTime(backoffSends * backoffAvgDelay);
+        }
+
+        // Total time
+        var totalTime = (numMinDelayRetries * minDelayTarget)
+            + (backoffSends * backoffAvgDelay)
+            + (numMaxDelayRetries * maxDelayTarget);
+        infoTotalTime.innerHTML = 'Total retries: ' + numRetries + ' &mdash; Total Time: ' + secsToTime(totalTime);
+        if (totalTime >= 3600) {
+            infoTotalTime.innerHTML += '<br><span class="warn">warning: exceeds sns total time limit of 3600 seconds</span>';
         }
 
         // Generate the policy from the field values
